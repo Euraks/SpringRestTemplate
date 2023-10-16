@@ -6,6 +6,7 @@ import org.example.service.DTO.SimpleEntityDTO;
 import org.example.service.DTO.mapper.SimpleEntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,23 +23,23 @@ public class SimpleEntityService {
         this.repository = repository;
         this.mapper = mapper;
     }
-
+    @Transactional
     public SimpleEntityDTO getEntityById(UUID id) {
         SimpleEntity entity = repository.findById(id).orElseThrow(() -> new RuntimeException("Entity not found"));
         return mapper.toDTO(entity);
     }
-
+    @Transactional
     public List<SimpleEntityDTO> getAllEntities() {
         List<SimpleEntity> entities = repository.findAll();
         return entities.stream().map(mapper::toDTO).collect(Collectors.toList());
     }
-
+    @Transactional
     public SimpleEntityDTO saveEntity(SimpleEntityDTO dto) {
         SimpleEntity entity = mapper.toEntity(dto);
         SimpleEntity savedEntity = repository.save(entity);
         return mapper.toDTO(savedEntity);
     }
-
+    @Transactional
     public void deleteEntity(UUID id) {
         repository.deleteById(id);
     }

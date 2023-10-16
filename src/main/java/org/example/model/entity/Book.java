@@ -1,13 +1,19 @@
 package org.example.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "uuid")
 public class Book {
 
     @Id
@@ -18,8 +24,8 @@ public class Book {
 
     private String bookText;
 
-    @ManyToMany
-    private List<Tag> tagEntities;
+    @ManyToMany(mappedBy = "bookEntities", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Tag> tagEntities = new ArrayList<>();;
 
     public UUID getUuid() {
         return uuid;
@@ -45,16 +51,26 @@ public class Book {
         this.tagEntities = tagEntities;
     }
 
+    public void addTag(Tag tag) {
+        this.tagEntities.add(tag);
+        tag.getBookEntities().add(this);
+    }
+
+    public void removeTag(Tag tag) {
+        this.tagEntities.remove(tag);
+        tag.getBookEntities().remove(this);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Book)) return false;
         Book book = (Book) o;
-        return Objects.equals( getUuid(), book.getUuid() ) && Objects.equals( getBookText(), book.getBookText() ) && Objects.equals( getTagEntities(), book.getTagEntities() );
+        return Objects.equals( getUuid(), book.getUuid() ) && Objects.equals( getBookText(), book.getBookText() );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash( getUuid(), getBookText(), getTagEntities() );
+        return Objects.hash( getUuid(), getBookText() );
     }
 }

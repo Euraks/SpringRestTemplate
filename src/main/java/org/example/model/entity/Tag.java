@@ -1,13 +1,19 @@
 package org.example.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "uuid")
 public class Tag {
 
     @Id
@@ -18,8 +24,8 @@ public class Tag {
 
     private String tagName;
 
-    @ManyToMany()
-    private List<Book> bookEntities;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Book> bookEntities  = new ArrayList<>();;
 
     public UUID getUuid() {
         return uuid;
@@ -45,16 +51,26 @@ public class Tag {
         this.bookEntities = bookEntities;
     }
 
+    public void addBook(Book book) {
+        this.bookEntities.add( book );
+        book.getTagEntities().add( this );
+    }
+
+    public void removeBook(Book book) {
+        this.bookEntities.remove( book );
+        book.getTagEntities().remove( this );
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Tag)) return false;
         Tag tag = (Tag) o;
-        return Objects.equals( getUuid(), tag.getUuid() ) && Objects.equals( getTagName(), tag.getTagName() ) && Objects.equals( getBookEntities(), tag.getBookEntities() );
+        return Objects.equals( getUuid(), tag.getUuid() ) && Objects.equals( getTagName(), tag.getTagName() );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash( getUuid(), getTagName(), getBookEntities() );
+        return Objects.hash( getUuid(), getTagName() );
     }
 }

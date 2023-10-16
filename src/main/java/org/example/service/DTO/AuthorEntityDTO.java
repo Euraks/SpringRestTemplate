@@ -3,6 +3,7 @@ package org.example.service.DTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 public class AuthorEntityDTO {
 
     private UUID uuid;
@@ -36,5 +37,4 @@ public class AuthorEntityDTO {
         this.articleList = articleList;
     }
 
-    // Методы equals, hashCode и toString, если они нужны
 }

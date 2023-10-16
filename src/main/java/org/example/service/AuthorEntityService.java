@@ -8,6 +8,7 @@ import org.example.service.DTO.mapper.ArticleMapper;
 import org.example.service.DTO.mapper.AuthorEntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,26 +20,25 @@ public class AuthorEntityService {
     private final AuthorEntityRepository repository;
     private final AuthorEntityMapper mapper;
 
-    private final ArticleMapper articleMapper;
+
 
     @Autowired
-    public AuthorEntityService(AuthorEntityRepository repository, AuthorEntityMapper mapper, ArticleMapper articleMapper) {
+    public AuthorEntityService(AuthorEntityRepository repository, AuthorEntityMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
-        this.articleMapper = articleMapper;
     }
-
+    @Transactional
     public AuthorEntityDTO getAuthorById(UUID id) {
         AuthorEntity author = repository.findByIdWithArticles(id)
                 .orElseThrow(() -> new RuntimeException("Author not found"));
         return mapper.toDTO(author);
     }
-
+    @Transactional
     public List<AuthorEntityDTO> getAllAuthors() {
         List<AuthorEntity> authors = repository.findAllWithArticles();
         return authors.stream().map(mapper::toDTO).collect(Collectors.toList());
     }
-
+    @Transactional
     public AuthorEntityDTO saveAuthor(AuthorEntityDTO dto) {
         AuthorEntity author = mapper.toEntity(dto);
 
@@ -51,7 +51,7 @@ public class AuthorEntityService {
         AuthorEntity savedAuthor = repository.save(author);
         return mapper.toDTO(savedAuthor);
     }
-
+    @Transactional
     public void deleteAuthor(UUID id) {
         repository.deleteById(id);
     }

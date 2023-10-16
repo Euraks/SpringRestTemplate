@@ -22,7 +22,7 @@ public class AuthorEntity {
     @Column(name = "author_name")
     private String authorName;
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Article> articleList = new ArrayList<>();
 
     public AuthorEntity() {}
