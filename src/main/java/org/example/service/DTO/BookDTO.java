@@ -6,7 +6,7 @@ import java.util.UUID;
 public class BookDTO {
     private UUID uuid;
     private String bookText;
-    private List<UUID> tagIds;
+    private List<TagDTO> tagEntities;
 
     public UUID getUuid() {
         return uuid;
@@ -24,11 +24,11 @@ public class BookDTO {
         this.bookText = bookText;
     }
 
-    public List<UUID> getTagIds() {
-        return tagIds;
+    public List<TagDTO> getTagEntities() {
+        return tagEntities;
     }
 
-    public void setTagIds(List<UUID> tagIds) {
-        this.tagIds = tagIds;
+    public void setTagEntities(List<TagDTO> tagEntities) {
+        this.tagEntities = tagEntities;
     }
 }

@@ -45,6 +45,7 @@ public class AppConfig {
         return em;
     }
 
+
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -70,6 +71,8 @@ public class AppConfig {
         Properties properties = new Properties();
         properties.put("hibernate.hbm2ddl.auto", "update");
         properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        properties.put("hibernate.id.new_generator_mappings", "true");  // добавьте эту строку
         return properties;
     }
+
 }

@@ -1,63 +1,116 @@
 package org.example.service;
 
 
-import jakarta.persistence.EntityNotFoundException;
 import org.example.model.entity.Book;
+import org.example.model.entity.Tag;
 import org.example.repository.BookEntityRepository;
+import org.example.repository.TagEntityRepository;
 import org.example.service.DTO.BookDTO;
+import org.example.service.DTO.TagDTO;
 import org.example.service.DTO.mapper.BookMapper;
+import org.example.service.DTO.mapper.TagMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
 @Service
 public class BookEntityService {
 
     private final BookEntityRepository bookRepository;
-
+    private final TagEntityRepository tagRepository;
     private final BookMapper bookMapper;
+    private final TagMapper tagMapper;
 
     @Autowired
-    public BookEntityService(BookEntityRepository bookRepository, BookMapper bookMapper) {
+    public BookEntityService(
+            BookEntityRepository bookRepository,
+            TagEntityRepository tagRepository,
+            BookMapper bookMapper,
+            TagMapper tagMapper) {
         this.bookRepository = bookRepository;
+        this.tagRepository = tagRepository;
         this.bookMapper = bookMapper;
+        this.tagMapper = tagMapper;
     }
 
     @Transactional
-    public BookDTO getBookById(UUID id) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+    public BookDTO createOrUpdateBook(BookDTO bookDTO) {
+        Set<Tag> tags = new HashSet<>();
+
+        for (TagDTO tagDTO : bookDTO.getTagEntities()) {
+            Tag tag;
+
+            if (tagDTO.getUuid() != null) {
+                tag = tagRepository.findById(tagDTO.getUuid()).orElse(null);
+                if (tag != null) {
+                    tag.setTagName(tagDTO.getTagName());
+                } else {
+                    tag = tagMapper.toEntity(tagDTO);
+                }
+            } else {
+                tag = tagMapper.toEntity(tagDTO);
+            }
+
+            tag = tagRepository.save(tag);
+            tags.add(tag);
+        }
+
+        Book book;
+        if (bookDTO.getUuid() != null) {
+            book = bookRepository.findById(bookDTO.getUuid()).orElse(null);
+            if (book != null) {
+                book.setBookText(bookDTO.getBookText());
+            } else {
+                book = bookMapper.toEntity(bookDTO);
+                book.setUuid(UUID.randomUUID());
+            }
+        } else {
+            book = bookMapper.toEntity(bookDTO);
+            book.setUuid(UUID.randomUUID());
+        }
+
+        book.setTagEntities(new ArrayList<>(tags));
+        book = bookRepository.save(book);
         return bookMapper.toDTO(book);
     }
+
+
 
     @Transactional
     public List<BookDTO> getAllBooks() {
         List<Book> books = bookRepository.findAll();
-        return books.stream().map(bookMapper::toDTO).collect(Collectors.toList());
-    }
+        List<BookDTO> bookDTOs = bookMapper.toDTOList(books);
 
-    @Transactional
-    public BookDTO saveOrUpdateBook(BookDTO dto) {
-        Optional<Book> existingBookOpt = bookRepository.findById(dto.getUuid());
-
-        if (existingBookOpt.isPresent()) {
-            Book existingBook = existingBookOpt.get();
-            Book updatedBook = bookMapper.toEntity(dto);
-            existingBook.setBookText(updatedBook.getBookText());
-            existingBook.setTagEntities(updatedBook.getTagEntities());
-            return bookMapper.toDTO(bookRepository.save(existingBook));
-        } else {
-            Book newBook = bookMapper.toEntity(dto);
-            return bookMapper.toDTO(bookRepository.save(newBook));
+        for (int i = 0; i < books.size(); i++) {
+            Book book = books.get(i);
+            BookDTO bookDTO = bookDTOs.get(i);
+            bookDTO.setTagEntities(tagMapper.toDTOList(book.getTagEntities()));
         }
+
+        return bookDTOs;
+    }
+
+    public BookDTO getBookById(UUID id) {
+        // Fetch book from the database
+        Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+
+        // Map the book entity to DTO
+        BookDTO bookDTO = bookMapper.toDTO(book);
+
+        // Map the tags without recursive book list inside them
+        bookDTO.setTagEntities(tagMapper.toDTOList(book.getTagEntities()));
+
+        return bookDTO;
     }
 
     @Transactional
-    public void deleteBook(UUID id) {
-        bookRepository.deleteById(id);
+    public void deleteBook(UUID bookId) {
+        bookRepository.deleteById( bookId );
     }
 }
