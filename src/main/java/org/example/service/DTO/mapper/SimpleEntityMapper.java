@@ -7,5 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface SimpleEntityMapper {
     SimpleEntityDTO toDTO(SimpleEntity entity);
+
     SimpleEntity toEntity(SimpleEntityDTO dto);
 }

@@ -14,7 +14,6 @@ import java.util.UUID;
 
 @Entity
 public class Book {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID uuid;
@@ -49,9 +48,18 @@ public class Book {
     }
 
     public void addTag(Tag tag) {
+        if (this.tagEntities == null) {
+            this.tagEntities = new ArrayList<>();
+        }
+
+        if (tag.getBookEntities() == null) {
+            tag.setBookEntities(new ArrayList<>());
+        }
+
         this.tagEntities.add(tag);
         tag.getBookEntities().add(this);
     }
+
 
     public void removeTag(Tag tag) {
         this.tagEntities.remove(tag);

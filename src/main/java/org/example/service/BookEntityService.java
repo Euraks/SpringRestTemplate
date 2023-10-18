@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -39,6 +40,8 @@ public class BookEntityService {
         this.tagMapper = tagMapper;
     }
 
+    Optional<String> string = Optional.of( "fgfg" );
+
     @Transactional
     public BookDTO createOrUpdateBook(BookDTO bookDTO) {
         Set<Tag> tags = new HashSet<>();
@@ -47,50 +50,49 @@ public class BookEntityService {
             Tag tag;
 
             if (tagDTO.getUuid() != null) {
-                tag = tagRepository.findById(tagDTO.getUuid()).orElse(null);
+                tag = tagRepository.findById( tagDTO.getUuid() ).orElse( null );
                 if (tag != null) {
-                    tag.setTagName(tagDTO.getTagName());
+                    tag.setTagName( tagDTO.getTagName() );
                 } else {
-                    tag = tagMapper.toEntity(tagDTO);
+                    tag = tagMapper.toEntity( tagDTO );
                 }
             } else {
-                tag = tagMapper.toEntity(tagDTO);
+                tag = tagMapper.toEntity( tagDTO );
             }
 
-            tag = tagRepository.save(tag);
-            tags.add(tag);
+            tag = tagRepository.save( tag );
+            tags.add( tag );
         }
 
         Book book;
         if (bookDTO.getUuid() != null) {
-            book = bookRepository.findById(bookDTO.getUuid()).orElse(null);
+            book = bookRepository.findById( bookDTO.getUuid() ).orElse( null );
             if (book != null) {
-                book.setBookText(bookDTO.getBookText());
+                book.setBookText( bookDTO.getBookText() );
             } else {
-                book = bookMapper.toEntity(bookDTO);
-                book.setUuid(UUID.randomUUID());
+                book = bookMapper.toEntity( bookDTO );
+                book.setUuid( UUID.randomUUID() );
             }
         } else {
-            book = bookMapper.toEntity(bookDTO);
-            book.setUuid(UUID.randomUUID());
+            book = bookMapper.toEntity( bookDTO );
+            book.setUuid( UUID.randomUUID() );
         }
 
-        book.setTagEntities(new ArrayList<>(tags));
-        book = bookRepository.save(book);
-        return bookMapper.toDTO(book);
+        book.setTagEntities( new ArrayList<>( tags ) );
+        book = bookRepository.save( book );
+        return bookMapper.toDTO( book );
     }
-
 
 
     @Transactional
     public List<BookDTO> getAllBooks() {
         List<Book> books = bookRepository.findAll();
-        List<BookDTO> bookDTOs = bookMapper.toDTOList(books);
+        List<BookDTO> bookDTOs = bookMapper.toDTOList( books );
 
         for (int i = 0; i < books.size(); i++) {
-            Book book = books.get(i);
-            BookDTO bookDTO = bookDTOs.get(i);
-            bookDTO.setTagEntities(tagMapper.toDTOList(book.getTagEntities()));
+            Book book = books.get( i );
+            BookDTO bookDTO = bookDTOs.get( i );
+            bookDTO.setTagEntities( tagMapper.toDTOList( book.getTagEntities() ) );
         }
 
         return bookDTOs;
@@ -98,13 +100,13 @@ public class BookEntityService {
 
     public BookDTO getBookById(UUID id) {
         // Fetch book from the database
-        Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+        Book book = bookRepository.findById( id ).orElseThrow( () -> new RuntimeException( "Book not found" ) );
 
         // Map the book entity to DTO
-        BookDTO bookDTO = bookMapper.toDTO(book);
+        BookDTO bookDTO = bookMapper.toDTO( book );
 
         // Map the tags without recursive book list inside them
-        bookDTO.setTagEntities(tagMapper.toDTOList(book.getTagEntities()));
+        bookDTO.setTagEntities( tagMapper.toDTOList( book.getTagEntities() ) );
 
         return bookDTO;
     }

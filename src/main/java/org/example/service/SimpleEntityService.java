@@ -23,25 +23,29 @@ public class SimpleEntityService {
         this.repository = repository;
         this.mapper = mapper;
     }
+
     @Transactional
     public SimpleEntityDTO getEntityById(UUID id) {
-        SimpleEntity entity = repository.findById(id).orElseThrow(() -> new RuntimeException("Entity not found"));
-        return mapper.toDTO(entity);
+        SimpleEntity entity = repository.findById( id ).orElseThrow( () -> new RuntimeException( "Entity not found" ) );
+        return mapper.toDTO( entity );
     }
+
     @Transactional
     public List<SimpleEntityDTO> getAllEntities() {
         List<SimpleEntity> entities = repository.findAll();
-        return entities.stream().map(mapper::toDTO).collect(Collectors.toList());
+        return entities.stream().map( mapper::toDTO ).collect( Collectors.toList() );
     }
+
     @Transactional
     public SimpleEntityDTO saveEntity(SimpleEntityDTO dto) {
-        SimpleEntity entity = mapper.toEntity(dto);
-        SimpleEntity savedEntity = repository.save(entity);
-        return mapper.toDTO(savedEntity);
+        SimpleEntity entity = mapper.toEntity( dto );
+        SimpleEntity savedEntity = repository.save( entity );
+        return mapper.toDTO( savedEntity );
     }
+
     @Transactional
     public void deleteEntity(UUID id) {
-        repository.deleteById(id);
+        repository.deleteById( id );
     }
 
 }
