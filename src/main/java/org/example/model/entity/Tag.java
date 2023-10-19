@@ -22,6 +22,15 @@ public class Tag {
 
     @ManyToMany(mappedBy = "tagEntities", fetch = FetchType.EAGER)
     private List<Book> bookEntities = new ArrayList<>();
+
+    public Tag(String tagName) {
+        this.tagName = tagName;
+    }
+
+    public Tag() {
+
+    }
+
     ;
 
     public UUID getUuid() {
