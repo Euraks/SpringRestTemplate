@@ -55,11 +55,11 @@ public class TagEntityService {
         return tagDTOList;
     }
 
-    @Transactional
-    public List<Book> getBooksByTag(UUID tagId) {
-        Optional<Tag> tagOpt = tagRepository.findById( tagId );
-        return tagOpt.map( Tag::getBookEntities ).orElse( Collections.emptyList() );
-    }
+//    @Transactional
+//    public List<Book> getBooksByTag(UUID tagId) {
+//        Optional<Tag> tagOpt = tagRepository.findById( tagId );
+//        return tagOpt.map( Tag::getBookEntities ).orElse( Collections.emptyList() );
+//    }
 
     @Transactional
     public TagDTO saveTag(TagDTO dto) {

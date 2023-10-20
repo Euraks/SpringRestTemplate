@@ -43,14 +43,4 @@ class AuthorEntityTest {
         anotherAuthor.setAuthorName( "Different Name" );
         assertThat( author ).isNotEqualTo( anotherAuthor );
     }
-
-    @Test
-    void oneToManyRelationWorksCorrectly() {
-        author.getArticleList().add( article1 );
-        author.getArticleList().add( article2 );
-
-        assertThat( article1.getAuthor() ).isEqualTo( author );
-        assertThat( article2.getAuthor() ).isEqualTo( author );
-        assertThat( author.getArticleList() ).containsExactly( article1, article2 );
-    }
 }

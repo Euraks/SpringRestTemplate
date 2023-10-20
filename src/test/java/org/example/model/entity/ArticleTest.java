@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 class ArticleTest {
 
@@ -21,6 +24,34 @@ class ArticleTest {
         article.setAuthor( author );
         article.setText( text );
     }
+
+    @Test
+    public void testEqualsSameObject() {
+        Article article = new Article(UUID.randomUUID(), "Test article");
+        assertTrue(article.equals(article));
+    }
+
+    @Test
+    public void testEqualsNullObject() {
+        Article article = new Article(UUID.randomUUID(), "Test article");
+        assertFalse(article.equals(null));
+    }
+
+    @Test
+    public void testEqualsDifferentClass() {
+        Article article = new Article(UUID.randomUUID(), "Test article");
+        AuthorEntity author = mock(AuthorEntity.class);
+        assertFalse(article.equals(author));
+    }
+
+    // Добавленные тесты для проверки условий
+    @Test
+    public void testEqualsWithSameClass() {
+        Article article1 = new Article(UUID.randomUUID(), "Test article");
+        Article article2 = new Article(UUID.randomUUID(), "Another article");
+        assertFalse(article1.equals(article2));
+    }
+
 
     @Test
     void gettersAndSettersWorkCorrectly() {

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SimpleEntityTest {
 
@@ -18,6 +19,15 @@ class SimpleEntityTest {
         simpleEntity = new SimpleEntity();
         simpleEntity.setUuid(uuid);
         simpleEntity.setDescription(description);
+    }
+
+    @Test
+    void testSimpleEntityConstructor() {
+        String expectedDescription = "Test Description";
+
+        SimpleEntity simpleEntity = new SimpleEntity(expectedDescription);
+
+        assertEquals(expectedDescription, simpleEntity.getDescription());
     }
 
     @Test

@@ -3,9 +3,13 @@ package org.example.model.entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class BookTest {
 
@@ -23,6 +27,31 @@ class BookTest {
 
         tag1 = new Tag("Tag1");
         tag2 = new Tag("Tag2");
+    }
+
+    @Test
+    void testSetTagEntities() {
+        Book book = new Book();
+
+        List<Tag> tags = new ArrayList<>();
+
+        book.setTagEntities(tags);
+
+        assertEquals(tags, book.getTagEntities());
+    }
+
+    @Test
+    void testAddTag() {
+        Book book = new Book();
+
+        Tag tag = new Tag();
+
+        book.addTag(tag);
+
+        List<Tag> tags = book.getTagEntities();
+        assertNotNull(tags);
+        assertEquals(1, tags.size());
+        assertEquals(tag, tags.get(0));
     }
 
     @Test
