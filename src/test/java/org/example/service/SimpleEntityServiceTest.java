@@ -1,29 +1,28 @@
 package org.example.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.example.model.entity.SimpleEntity;
 import org.example.repository.SimpleEntityRepository;
 import org.example.service.DTO.SimpleEntityDTO;
 import org.example.service.DTO.mapper.SimpleEntityMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.UUID;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class SimpleEntityServiceTest {
+class SimpleEntityServiceTest {
 
     @Mock
     private SimpleEntityRepository repository;
@@ -48,47 +47,47 @@ public class SimpleEntityServiceTest {
     }
 
     @Test
-    public void getEntityByIdShouldReturnEntity() {
-        when(repository.findById(testUuid)).thenReturn(Optional.of(testEntity));
-        when(mapper.toDTO(testEntity)).thenReturn(testDTO);
+    void getEntityByIdShouldReturnEntity() {
+        when( repository.findById( testUuid ) ).thenReturn( Optional.of( testEntity ) );
+        when( mapper.toDTO( testEntity ) ).thenReturn( testDTO );
 
-        SimpleEntityDTO result = service.getEntityById(testUuid);
+        SimpleEntityDTO result = service.getEntityById( testUuid );
 
-        assertEquals(testDTO, result);
+        assertEquals( testDTO, result );
     }
 
     @Test
-    public void getEntityByIdShouldThrowExceptionWhenNotFound() {
-        when(repository.findById(testUuid)).thenReturn(Optional.empty());
+    void getEntityByIdShouldThrowExceptionWhenNotFound() {
+        when( repository.findById( testUuid ) ).thenReturn( Optional.empty() );
 
-        assertThrows(RuntimeException.class, () -> service.getEntityById(testUuid));
+        assertThrows( RuntimeException.class, () -> service.getEntityById( testUuid ) );
     }
 
     @Test
-    public void getAllEntitiesShouldReturnListOfEntities() {
-        when(repository.findAll()).thenReturn(Collections.singletonList(testEntity));
-        when(mapper.toDTO(testEntity)).thenReturn(testDTO);
+    void getAllEntitiesShouldReturnListOfEntities() {
+        when( repository.findAll() ).thenReturn( Collections.singletonList( testEntity ) );
+        when( mapper.toDTO( testEntity ) ).thenReturn( testDTO );
 
         List<SimpleEntityDTO> result = service.getAllEntities();
 
-        assertEquals(1, result.size());
-        assertEquals(testDTO, result.get(0));
+        assertEquals( 1, result.size() );
+        assertEquals( testDTO, result.get( 0 ) );
     }
 
     @Test
-    public void saveEntityShouldReturnSavedEntity() {
-        when(mapper.toEntity(testDTO)).thenReturn(testEntity);
-        when(repository.save(testEntity)).thenReturn(testEntity);
-        when(mapper.toDTO(testEntity)).thenReturn(testDTO);
+    void saveEntityShouldReturnSavedEntity() {
+        when( mapper.toEntity( testDTO ) ).thenReturn( testEntity );
+        when( repository.save( testEntity ) ).thenReturn( testEntity );
+        when( mapper.toDTO( testEntity ) ).thenReturn( testDTO );
 
-        SimpleEntityDTO result = service.saveEntity(testDTO);
+        SimpleEntityDTO result = service.saveEntity( testDTO );
 
-        assertEquals(testDTO, result);
+        assertEquals( testDTO, result );
     }
 
     @Test
-    public void deleteEntityShouldCallDeleteById() {
-        service.deleteEntity(testUuid);
-        verify(repository).deleteById(testUuid);
+    void deleteEntityShouldCallDeleteById() {
+        service.deleteEntity( testUuid );
+        verify( repository ).deleteById( testUuid );
     }
 }

@@ -69,7 +69,6 @@ class BookTest {
         assertThat(book).isEqualTo(anotherBook);
         assertThat(book.hashCode()).isEqualTo(anotherBook.hashCode());
 
-        // Additional tests to ensure they aren't equal if a field changes
         anotherBook.setBookText("Different Text");
         assertThat(book).isNotEqualTo(anotherBook);
     }

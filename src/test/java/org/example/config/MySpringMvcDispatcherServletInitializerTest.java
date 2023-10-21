@@ -9,18 +9,18 @@ class MySpringMvcDispatcherServletInitializerTest {
     private final MySpringMvcDispatcherSerlvetIntitializer initializer = new MySpringMvcDispatcherSerlvetIntitializer();
 
     @Test
-    void getRootConfigClasses_ShouldReturnNull() {
+    void getRootConfigClassesShouldReturnNull() {
         assertThat( initializer.getRootConfigClasses() ).isNull();
     }
 
     @Test
-    void getServletConfigClasses_ShouldReturnAppConfig() {
+    void getServletConfigClassesShouldReturnAppConfig() {
         Class<?>[] configClasses = initializer.getServletConfigClasses();
         assertThat( configClasses ).containsExactly( AppConfig.class );
     }
 
     @Test
-    void getServletMappings_ShouldReturnRootPath() {
+    void getServletMappingsShouldReturnRootPath() {
         String[] mappings = initializer.getServletMappings();
         assertThat( mappings ).containsExactly( "/" );
     }

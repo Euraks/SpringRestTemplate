@@ -7,10 +7,10 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class SimpleEntityDTOTest {
+class SimpleEntityDTOTest {
 
     @Test
-    public void testGetUuid() {
+    void testGetUuid() {
         SimpleEntityDTO simpleEntityDTO = new SimpleEntityDTO();
         UUID uuid = UUID.randomUUID();
         simpleEntityDTO.setUuid( uuid );
@@ -18,7 +18,7 @@ public class SimpleEntityDTOTest {
     }
 
     @Test
-    public void testGetDescription() {
+    void testGetDescription() {
         SimpleEntityDTO simpleEntityDTO = new SimpleEntityDTO();
         String description = "Sample description";
         simpleEntityDTO.setDescription( description );
@@ -26,13 +26,13 @@ public class SimpleEntityDTOTest {
     }
 
     @Test
-    public void testGetUuidWhenNotSet() {
+    void testGetUuidWhenNotSet() {
         SimpleEntityDTO simpleEntityDTO = new SimpleEntityDTO();
         assertNull( simpleEntityDTO.getUuid() );
     }
 
     @Test
-    public void testGetDescriptionWhenNotSet() {
+    void testGetDescriptionWhenNotSet() {
         SimpleEntityDTO simpleEntityDTO = new SimpleEntityDTO();
         assertNull( simpleEntityDTO.getDescription() );
     }

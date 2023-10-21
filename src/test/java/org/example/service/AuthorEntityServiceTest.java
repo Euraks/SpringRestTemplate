@@ -1,7 +1,5 @@
 package org.example.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.example.model.entity.Article;
 import org.example.model.entity.AuthorEntity;
 import org.example.repository.AuthorEntityRepository;
@@ -18,8 +16,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class AuthorEntityServiceTest {
 
@@ -82,7 +86,7 @@ class AuthorEntityServiceTest {
     }
 
     @Test
-    void testSaveAuthor_ExistingAuthorWithArticlesUpdate() {
+    void testSaveAuthorExistingAuthorWithArticlesUpdate() {
         AuthorEntityDTO mockAuthorDTO = new AuthorEntityDTO();
         AuthorEntity existingAuthorEntity = new AuthorEntity();
         Article existingArticle = new Article();
@@ -112,7 +116,7 @@ class AuthorEntityServiceTest {
     }
 
     @Test
-    void testSaveAuthor_NewAuthorWithArticles() {
+    void testSaveAuthorNewAuthorWithArticles() {
         AuthorEntityDTO mockAuthorDTO = new AuthorEntityDTO();
         Article mockArticle = new Article();
         AuthorEntity mockAuthorEntity = new AuthorEntity();
@@ -132,7 +136,7 @@ class AuthorEntityServiceTest {
 
 
     @Test
-    public void testDeleteAuthor() {
+    void testDeleteAuthor() {
         doNothing().when(repository).deleteById(any(UUID.class));
         authorEntityService.deleteAuthor(testUUID);
 

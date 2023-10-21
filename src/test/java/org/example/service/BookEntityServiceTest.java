@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.example.model.entity.Tag;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,7 +31,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class BookEntityServiceTest {
+class BookEntityServiceTest {
 
     @InjectMocks
     private BookEntityService bookEntityService;
@@ -56,7 +57,7 @@ public class BookEntityServiceTest {
     }
 
     @Test
-    public void createOrUpdateBookNewBookTest() {
+    void createOrUpdateBookNewBookTest() {
         BookDTO bookDTO = new BookDTO();
         bookDTO.setTagEntities(new ArrayList<>());
         TagDTO tagDTO = new TagDTO();
@@ -78,7 +79,7 @@ public class BookEntityServiceTest {
 
 
     @Test
-    public void getAllBooksTest() {
+    void getAllBooksTest() {
         Book book = new Book();
         List<Book> books = Collections.singletonList(book);
 
@@ -91,7 +92,7 @@ public class BookEntityServiceTest {
     }
 
     @Test
-    public void getBookByIdTest() {
+    void getBookByIdTest() {
         Book book = new Book();
 
         when(bookRepository.findById(testUUID)).thenReturn( Optional.of(book));
@@ -103,20 +104,85 @@ public class BookEntityServiceTest {
     }
 
     @Test
-    public void getBookByIdNotFoundTest() {
+    void getBookByIdNotFoundTest() {
         when(bookRepository.findById(testUUID)).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> bookEntityService.getBookById(testUUID));
     }
 
     @Test
-    public void deleteBookTest() {
+    void deleteBookTest() {
         doNothing().when(bookRepository).deleteById(testUUID);
 
         bookEntityService.deleteBook(testUUID);
 
         verify(bookRepository, times(1)).deleteById(testUUID);
     }
+    @Test
+    void createOrUpdateBookNewTagWithNullUUIDTest() {
+        BookDTO bookDTO = new BookDTO();
+        TagDTO tagDTO = new TagDTO();
+        bookDTO.setTagEntities(Collections.singletonList(tagDTO));
+
+        Tag tag = new Tag();
+        Book book = new Book();
+
+        when(tagMapper.toEntity(tagDTO)).thenReturn(tag);
+        when(tagRepository.save(tag)).thenReturn(tag);
+        when(bookMapper.toEntity(bookDTO)).thenReturn(book);
+
+        bookEntityService.createOrUpdateBook(bookDTO);
+
+        verify(tagMapper).toEntity(tagDTO);
+        verify(tagRepository).save(tag);
+    }
+
+    @Test
+    void createOrUpdateBookExistingTagWithUUIDTest() {
+        BookDTO bookDTO = new BookDTO();
+        TagDTO tagDTO = new TagDTO();
+        tagDTO.setUuid(testUUID);
+        tagDTO.setTagName("UpdatedTagName");
+        bookDTO.setTagEntities(Collections.singletonList(tagDTO));
+
+        Tag existingTag = new Tag();
+        Book book = new Book();
+
+        when(tagRepository.findById(testUUID)).thenReturn(Optional.of(existingTag));
+        when(tagRepository.save(existingTag)).thenReturn(existingTag);
+        when(bookMapper.toEntity(bookDTO)).thenReturn(book); // добавили эту строку
+
+        bookEntityService.createOrUpdateBook(bookDTO);
+
+        assertEquals("UpdatedTagName", existingTag.getTagName());
+        verify(tagRepository).save(existingTag);
+    }
+
+
+    @Test
+    void createOrUpdateBookNonExistingTagWithUUIDTest() {
+        BookDTO bookDTO = new BookDTO();
+        TagDTO tagDTO = new TagDTO();
+        tagDTO.setUuid(testUUID);
+        bookDTO.setTagEntities(Collections.singletonList(tagDTO));
+
+        Tag tag = new Tag();
+        Book book = new Book();
+
+        when(tagRepository.findById(testUUID)).thenReturn(Optional.empty());
+        when(tagMapper.toEntity(tagDTO)).thenReturn(tag);
+        when(tagRepository.save(tag)).thenReturn(tag);
+        when(bookMapper.toEntity(bookDTO)).thenReturn(book);
+
+        bookEntityService.createOrUpdateBook(bookDTO);
+
+        verify(tagMapper).toEntity(tagDTO);
+        verify(tagRepository).save(tag);
+    }
+
+
+
+
 
     @AfterEach
     public void cleanup() {

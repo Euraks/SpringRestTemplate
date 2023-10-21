@@ -29,7 +29,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class TagEntityServiceTest {
+class TagEntityServiceTest {
 
     @InjectMocks
     private TagEntityService tagEntityService;
@@ -55,7 +55,7 @@ public class TagEntityServiceTest {
     }
 
     @Test
-    public void getTagById() {
+    void getTagById() {
         Tag mockTag = new Tag();
         TagDTO mockTagDTO = new TagDTO();
 
@@ -88,7 +88,7 @@ public class TagEntityServiceTest {
 
 
     @Test
-    public void throwExceptionWhenUpdatingNonExistingTagTest() {
+    void throwExceptionWhenUpdatingNonExistingTagTest() {
         TagDTO mockTagDTO = new TagDTO();
         mockTagDTO.setUuid( testUUID );
 
@@ -99,7 +99,7 @@ public class TagEntityServiceTest {
 
 
     @Test
-    public void getAllTagsTest() {
+    void getAllTagsTest() {
         Tag mockTag = new Tag();
         Book mockBook = new Book();
 
@@ -122,7 +122,7 @@ public class TagEntityServiceTest {
 
 
     @Test
-    public void saveTagNewTag() {
+    void saveTagNewTag() {
         TagDTO mockTagDTO = new TagDTO();
         Tag mockTag = new Tag();
 
@@ -168,7 +168,7 @@ public class TagEntityServiceTest {
 
 
     @Test
-    public void deleteTagTest() {
+    void deleteTagTest() {
         Book mockBook1 = new Book();
         Book mockBook2 = new Book();
         List<Book> mockBooks = Arrays.asList( mockBook1, mockBook2 );
@@ -181,7 +181,7 @@ public class TagEntityServiceTest {
     }
 
     @Test
-    public void saveTagUpdateExistingTag() {
+    void saveTagUpdateExistingTag() {
 
         TagDTO inputDto = new TagDTO();
         inputDto.setUuid( testUUID );
@@ -191,7 +191,7 @@ public class TagEntityServiceTest {
         existingTag.setUuid( testUUID );
         existingTag.setTagName( "Original Tag" );
 
-        when(tagRepository.existsById(any(UUID.class))).thenReturn(true);
+        when( tagRepository.existsById( any( UUID.class ) ) ).thenReturn( true );
         when(tagRepository.findById(any(UUID.class))).thenReturn(Optional.of(existingTag));
         when(tagRepository.save(any(Tag.class))).thenReturn(existingTag);
         when(tagMapper.toDTO(any(Tag.class))).thenReturn(inputDto);
@@ -203,7 +203,7 @@ public class TagEntityServiceTest {
 
 
     @Test
-    public void saveTagTagNotFound() {
+    void saveTagTagNotFound() {
 
         TagDTO inputDto = new TagDTO();
         inputDto.setUuid( testUUID );

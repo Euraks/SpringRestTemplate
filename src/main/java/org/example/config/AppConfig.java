@@ -5,7 +5,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -16,6 +15,8 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Properties;
 
 
@@ -40,7 +41,7 @@ public class AppConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());
-        em.setPackagesToScan(new String[] { "org.example" });
+        em.setPackagesToScan( "org.example" );
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         em.setJpaProperties(hibernateProperties());
         return em;
@@ -50,15 +51,22 @@ public class AppConfig {
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
-        dataSource.setDriverClassName(env.getProperty("dataSourceClassName"));
-        dataSource.setUrl("jdbc:postgresql://" + env.getProperty("dataSource.serverName") +
-                ":" + env.getProperty("dataSource.portNumber") +
-                "/" + env.getProperty("dataSource.databaseName"));
+        dataSource.setDriverClassName( Objects.requireNonNull( env.getProperty( "dataSourceClassName" ) ) );
+
+        if (Arrays.asList(env.getActiveProfiles()).contains("test")) {
+            dataSource.setUrl(env.getProperty("dataSource.url"));
+        } else {
+            dataSource.setUrl("jdbc:postgresql://" + env.getProperty("dataSource.serverName") +
+                    ":" + env.getProperty("dataSource.portNumber") +
+                    "/" + env.getProperty("dataSource.databaseName"));
+        }
+
         dataSource.setUsername(env.getProperty("dataSource.user"));
         dataSource.setPassword(env.getProperty("dataSource.password"));
 
         return dataSource;
     }
+
 
     @Bean
     public JpaTransactionManager transactionManager() {
@@ -70,9 +78,10 @@ public class AppConfig {
     private Properties hibernateProperties() {
         Properties properties = new Properties();
         properties.put("hibernate.hbm2ddl.auto", "update");
-        properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-        properties.put("hibernate.id.new_generator_mappings", "true");  // добавьте эту строку
+        String activeProfile = Arrays.asList(env.getActiveProfiles()).contains("test") ?
+                "org.hibernate.dialect.H2Dialect" : "org.hibernate.dialect.PostgreSQLDialect";
+        properties.put("hibernate.dialect", activeProfile);
+        properties.put("hibernate.id.new_generator_mappings", "true");
         return properties;
     }
-
 }

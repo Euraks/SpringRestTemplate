@@ -12,8 +12,6 @@ class AuthorEntityTest {
     private AuthorEntity author;
     private final UUID uuid = UUID.randomUUID();
     private final String authorName = "John Doe";
-    private Article article1;
-    private Article article2;
 
     @BeforeEach
     public void setUp() {
@@ -21,8 +19,8 @@ class AuthorEntityTest {
         author.setUuid( uuid );
         author.setAuthorName( authorName );
 
-        article1 = new Article( "Text1" );
-        article2 = new Article( "Text2" );
+        Article article1 = new Article( "Text1" );
+        Article article2 = new Article( "Text2" );
     }
 
     @Test

@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -26,30 +28,29 @@ class ArticleTest {
     }
 
     @Test
-    public void testEqualsSameObject() {
+    void testEqualsSameObject() {
         Article article = new Article(UUID.randomUUID(), "Test article");
-        assertTrue(article.equals(article));
+        assertEquals( article, article );
     }
 
     @Test
-    public void testEqualsNullObject() {
+    void testEqualsNullObject() {
         Article article = new Article(UUID.randomUUID(), "Test article");
-        assertFalse(article.equals(null));
+        assertNotEquals( null, article );
     }
 
     @Test
-    public void testEqualsDifferentClass() {
+    void testEqualsDifferentClass() {
         Article article = new Article(UUID.randomUUID(), "Test article");
         AuthorEntity author = mock(AuthorEntity.class);
-        assertFalse(article.equals(author));
+        assertNotEquals( article, author );
     }
 
-    // Добавленные тесты для проверки условий
     @Test
-    public void testEqualsWithSameClass() {
+    void testEqualsWithSameClass() {
         Article article1 = new Article(UUID.randomUUID(), "Test article");
         Article article2 = new Article(UUID.randomUUID(), "Another article");
-        assertFalse(article1.equals(article2));
+        assertNotEquals( article1, article2 );
     }
 
 
